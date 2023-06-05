@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package main;
+
+option go_package = "internal/proto";
+
+service Shortener {
+  rpc Create(Request) returns (Response) {}
+  rpc Get(Request) returns (Response) {}
+}
+
+message Request {
+  string Link = 1;
+  bool Success = 2;
+}
+
+message Response {
+  string Link = 1;
+  bool Success = 2;
+}
