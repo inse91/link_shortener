@@ -4,7 +4,7 @@
 // - protoc             v3.21.12
 // source: api/shortener.proto
 
-package proto
+package handler
 
 import (
 	context "context"

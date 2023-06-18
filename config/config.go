@@ -10,7 +10,7 @@ const (
 	defaultHttpPort = "10010"
 
 	dbPortKey     = "DB_CONNECTION"
-	defaultDbPort = ""
+	defaultDbConn = ""
 )
 
 type Config struct {
@@ -23,7 +23,7 @@ func Get() Config {
 	return Config{
 		GrpcPort: getEnvOrSetToDefault(grpcPortKey, defaultGrpcPort),
 		HttpPort: getEnvOrSetToDefault(httpPortKey, defaultHttpPort),
-		DataBase: getEnvOrSetToDefault(dbPortKey, defaultDbPort),
+		DataBase: getEnvOrSetToDefault(dbPortKey, defaultDbConn),
 	}
 }
 

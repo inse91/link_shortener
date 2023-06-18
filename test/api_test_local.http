@@ -1,0 +1,44 @@
+GET http://localhost:8081/hello
+Accept: application/json
+
+###
+
+GET http://localhost:8081/swagger
+Accept: application/json
+
+###
+
+POST http://localhost:8081/create
+Accept: application/json
+Content-Type: application/json
+
+{
+"link": "google12345.com"
+}
+
+###
+
+POST http://localhost:8081/get
+Accept: application/json
+Content-Type: application/json
+
+{
+"link": "a7THv_8C20x"
+}
+
+###
+
+GRPC localhost:8082/main.Shortener/Get
+
+{
+"Link": "a7THv_8C20x"
+}
+
+###
+
+GRPC localhost:8082/main.Shortener/Create
+
+{
+"Link": "f23off1o.ru"
+}
+

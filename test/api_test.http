@@ -1,0 +1,39 @@
+GET http://localhost:10000/hello
+Accept: application/json
+
+###
+
+POST http://localhost:10010/create
+Accept: application/json
+Content-Type: application/json
+
+{
+"link": "elama/132fff.com"
+}
+
+###
+
+POST http://localhost:10010/get
+Accept: application/json
+Content-Type: application/json
+
+{
+"link": "fh_NbA79TCf"
+}
+
+###
+
+GRPC localhost:10000/main.Shortener/Get
+
+{
+"Link": "2hlww2D7ziP"
+}
+
+###
+
+GRPC localhost:10000/main.Shortener/Create
+
+{
+"Link": "f23off1offff123.ru"
+}
+

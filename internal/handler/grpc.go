@@ -1,9 +1,10 @@
-package proto
+package handler
 
 import (
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+	errs "link_shortener/internal/error"
 	"link_shortener/internal/service"
 	"log"
 	"time"
@@ -16,7 +17,6 @@ type Shortener struct {
 
 func (s Shortener) Create(ctx context.Context, request *Request) (*Response, error) {
 	link := request.GetLink()
-
 	shortedLink, err := s.service.Create(link)
 	if err != nil {
 		return &Response{
@@ -35,10 +35,17 @@ func (s Shortener) Get(ctx context.Context, request *Request) (*Response, error)
 
 	fullLink, err := s.service.Get(link)
 	if err != nil {
+		if err == errs.ErrNotFound {
+			return &Response{
+				Success: false,
+				Link:    err.Error(),
+			}, nil
+		}
 		return &Response{
 			Success: false,
-			Link:    "",
+			Link:    "internal error: " + err.Error(),
 		}, nil
+
 	}
 	return &Response{
 		Link:    fullLink,
@@ -49,10 +56,10 @@ func (s Shortener) Get(ctx context.Context, request *Request) (*Response, error)
 func (s Shortener) mustEmbedUnimplementedShortenerServer() {
 }
 
-func NewShorterServer(logger *log.Logger, service *service.Shorter) *grpc.Server {
+func NewGrpc(logger *log.Logger, service *service.Shorter) *grpc.Server {
 	grpcServer := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: 5 * time.Minute, // <--- This fixes it!
+			MaxConnectionIdle: 5 * time.Minute,
 		}),
 	)
 

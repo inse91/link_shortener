@@ -16,11 +16,11 @@ type pg struct {
 	log    *log.Logger
 }
 
-func newPg(ctx context.Context, connPort string, log *log.Logger) (Store, error) {
+func newPg(ctx context.Context, dbConn string, log *log.Logger) (Store, error) {
 
 	connectionString := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s",
-		"postgres", "password", "localhost", connPort, "postgres",
+		"postgres://%s:%s@%s/%s",
+		"postgres", "password", dbConn, "postgres",
 	)
 
 	conn, err := pgx.Connect(ctx, connectionString)
@@ -41,7 +41,7 @@ func newPg(ctx context.Context, connPort string, log *log.Logger) (Store, error)
 }
 
 func (p *pg) Create(short, full string) error {
-
+	p.log.Printf("creating record %s => %s\n", short, full)
 	q := `INSERT
 			INTO public.links (short, "full") 
 			VALUES ($1, $2)
@@ -53,12 +53,11 @@ func (p *pg) Create(short, full string) error {
 		return err
 	}
 
-	p.log.Printf("link created with id %s", id)
 	return nil
 }
 
 func (p *pg) Get(short string) (string, error) {
-
+	p.log.Printf("getting full link form %s\n", short)
 	q := `
 		SELECT ("full")
 			FROM public.links 
@@ -70,12 +69,10 @@ func (p *pg) Get(short string) (string, error) {
 		QueryRow(context.TODO(), q, short).
 		Scan(&full); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			p.log.Printf("link with short %s not found", short)
 			return "", errs.ErrNotFound
 		}
 		return "", err
 	}
 
-	p.log.Printf("found full link %s (from short) %s", full, short)
 	return full, nil
 }

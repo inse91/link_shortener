@@ -5,21 +5,32 @@ import (
 	"hash/crc64"
 	errs "link_shortener/internal/error"
 	"link_shortener/internal/model"
-	"link_shortener/internal/store"
+	store2 "link_shortener/internal/store"
 	"log"
 	"strings"
 )
 
 type Shorter struct {
 	log   *log.Logger
-	store store.Store
+	store store2.Store
 }
 
-func NewShorter(store store.Store, log *log.Logger) *Shorter {
+func NewShorter(store store2.Store, log *log.Logger) *Shorter {
 	return &Shorter{
 		log:   log,
 		store: store,
 	}
+}
+
+func (s Shorter) Get(short string) (full string, err error) {
+
+	full, err = s.store.Get(short)
+	if err != nil {
+		s.log.Printf("failed getting full from %s\n", short)
+		return "", err
+	}
+
+	return full, nil
 }
 
 func (s Shorter) Create(full string) (short string, err error) {
@@ -29,15 +40,16 @@ func (s Shorter) Create(full string) (short string, err error) {
 
 	// проверка на коллизии
 	var isOk bool
-	for isOk, err = s.collisionCheck(full, short); ; {
+	//for isOk, err = s.collisionCheck(full, short); ; {
+	for isOk, err = s.collisionCheck(full, short); !errors.Is(err, errs.ErrNotFound); {
 
 		if err == nil && isOk {
 			return short, nil
 		}
 
-		if errors.Is(err, errs.ErrNotFound) {
-			break
-		}
+		//if errors.Is(err, errs.ErrNotFound) {
+		//	break
+		//}
 
 		short += string(model.AlphabetBase63[0])
 	}
@@ -48,16 +60,6 @@ func (s Shorter) Create(full string) (short string, err error) {
 	}
 
 	return short, nil
-}
-
-func (s Shorter) Get(short string) (full string, err error) {
-
-	full, err = s.store.Get(short)
-	if err != nil {
-		return "", err
-	}
-
-	return full, nil
 }
 
 func (s Shorter) collisionCheck(full, short string) (bool, error) {
