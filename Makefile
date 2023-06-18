@@ -5,6 +5,5 @@ server_interface:
 	protoc --go-grpc_out=./internal/proto --go-grpc_opt=paths=source_relative api/shortener.proto
 
 swagger_gen:
-	swag init -g ../app/app.go  -d ./,../internal/handler/,../internal/model/
-
+	swag init -g ../app/app.go -d ./,../internal/handler/,../internal/model/ -o ../api
 

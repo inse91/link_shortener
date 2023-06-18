@@ -31,7 +31,7 @@ Content-Type: application/json
 GRPC localhost:8082/main.Shortener/Get
 
 {
-"Link": "a7THv_8C20x"
+"Link": "dGE_cnMJEgF"
 }
 
 ###

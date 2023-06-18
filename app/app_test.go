@@ -20,6 +20,8 @@ import (
 var (
 	httpPort = "8081"
 	grpcPort = "8082"
+	dbConn   = ""
+	//dbConn   = "localhost:5432"
 )
 
 func TestE2E_AUTO(t *testing.T) {
@@ -206,8 +208,7 @@ func setup(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	//if err = os.Setenv("DB_CONNECTION", "localhost:5432"); err != nil {
-	if err = os.Setenv("DB_CONNECTION", ""); err != nil {
+	if err = os.Setenv("DB_CONNECTION", dbConn); err != nil {
 		t.Fatal(err)
 	}
 
